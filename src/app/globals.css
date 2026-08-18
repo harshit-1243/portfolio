@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+/**
+ * Design tokens.
+ *
+ * Acid lime on near-black, with violet as the secondary. Both clear WCAG AA
+ * against --bg; the pairing reads as data-viz rather than the cyan-on-black
+ * that every other 3D portfolio uses.
+ */
+@theme {
+  --color-bg: #05060a;
+  --color-surface: #0b0e15;
+  --color-primary: #c6ff3d;
+  --color-secondary: #7c5cff;
+  --color-ink: #e8ecf2;
+  --color-muted: #8b97a8;
+  --color-line: #1b212c;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* The fixed WebGL layer everything else sits on top of. */
+.scene-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/*
+ * React Three Fiber injects wrapper divs that set pointer-events: auto, which
+ * re-enables hit-testing underneath the scene layer and swallows text selection
+ * on the content above it. The layer's own pointer-events: none is not enough;
+ * the children have to be pinned too.
+ */
+.scene-layer * {
+  pointer-events: none !important;
+}
+
+.content-layer {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+ * Frosted panel behind body copy. Without it the 3D shows through text at
+ * low-contrast angles and fails WCAG in exactly the places the scene looks
+ * best — which is the worst possible tradeoff to make silently.
+ */
+.panel {
+  background: color-mix(in oklab, var(--color-surface) 82%, transparent);
+  backdrop-filter: blur(10px) saturate(120%);
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  background: var(--color-primary);
+  color: #05060a;
+  border-radius: 0 0 8px 0;
+  font-weight: 600;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Reveal-on-scroll, driven by IntersectionObserver. */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal[data-revealed="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
