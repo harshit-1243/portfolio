@@ -30,7 +30,12 @@ export default function Home() {
       addressLocality: profile.location,
     },
     knowsAbout: profile.skills.flatMap((g) => [...g.items]),
-    sameAs: [profile.links.github].filter((l) => l && !l.startsWith("TODO")),
+    sameAs: [profile.links.github, profile.links.linkedin],
+    email: `mailto:${profile.links.email}`,
+    worksFor: {
+      "@type": "Organization",
+      name: profile.experience[0]?.org,
+    },
   };
 
   return (

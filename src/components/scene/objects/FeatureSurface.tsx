@@ -10,26 +10,32 @@ import type { DeviceTier } from "@/lib/useReducedMotion";
 /**
  * NSE Earnings Prediction, as geometry.
  *
- * A 34x34 wireframe feature-importance landscape approximating the model's
- * 35-feature space. The five Gaussian peaks aren't arbitrary: the dominant one
- * is cash-flow quality — the paper's actual headline finding — deliberately
- * scaled so it's unmistakably tallest. The secondary ridges are the correlated
- * ratio families (margin, leverage, growth, valuation) that conventional
- * screens overweight.
+ * A wireframe feature landscape over the study's ratio space. The shape encodes
+ * the paper's actual finding, which is a NULL result: financial ratios carry
+ * limited predictive signal for annual earnings direction in NSE large-caps.
  *
- * Wireframe rather than a shaded surface: it stays legible on a dark background
- * without a dedicated light rig, and the visible grid itself communicates
- * "discretised feature space" in a way a smooth surface doesn't.
+ * So there is deliberately no dominant peak. The surface is a shallow, ridged
+ * noise floor - several comparable low bumps, none winning. An earlier version
+ * of this object showed one tall peak, which would have illustrated the
+ * opposite of what the research concluded; a portfolio object that contradicts
+ * its own paper is worse than no object at all.
+ *
+ * Wireframe rather than shaded: it stays legible on a dark background without a
+ * light rig, and the grid communicates "discretised feature space" directly.
  */
 
 type Peak = { x: number; y: number; h: number; s: number };
 
 const PEAKS: Peak[] = [
-  { x: -0.15, y: 0.1, h: 1.0, s: 0.24 },  // cash-flow quality — dominant
-  { x: 0.45, y: -0.3, h: 0.42, s: 0.2 },  // margin family
-  { x: -0.55, y: -0.45, h: 0.34, s: 0.22 }, // leverage
-  { x: 0.3, y: 0.55, h: 0.3, s: 0.18 },   // growth
-  { x: 0.62, y: 0.28, h: 0.22, s: 0.16 }, // valuation
+  // Comparable magnitudes on purpose: no ratio family dominates. Heights sit in
+  // a narrow band so the eye reads "flat and noisy", not "one clear winner".
+  { x: -0.15, y: 0.1, h: 0.30, s: 0.22 },
+  { x: 0.45, y: -0.3, h: 0.26, s: 0.2 },
+  { x: -0.55, y: -0.45, h: 0.28, s: 0.22 },
+  { x: 0.3, y: 0.55, h: 0.24, s: 0.18 },
+  { x: 0.62, y: 0.28, h: 0.22, s: 0.16 },
+  { x: -0.7, y: 0.5, h: 0.25, s: 0.19 },
+  { x: 0.05, y: -0.65, h: 0.27, s: 0.2 },
 ];
 
 function heightAt(u: number, v: number) {
@@ -56,7 +62,7 @@ export function FeatureSurface({ tier }: { tier: DeviceTier }) {
     for (let i = 0; i < pos.count; i++) {
       const u = (pos.getX(i) / size) * 2;
       const v = (pos.getY(i) / size) * 2;
-      pos.setZ(i, heightAt(u, v) * 3.4);
+      pos.setZ(i, heightAt(u, v) * 2.2);
     }
     plane.computeVertexNormals();
     const wire = new THREE.WireframeGeometry(plane);
@@ -64,12 +70,13 @@ export function FeatureSurface({ tier }: { tier: DeviceTier }) {
     return wire;
   }, [segments]);
 
-  // World-space position of the dominant peak, for the marker.
+  // Marker sits just above the mean height, tracing the baseline the null
+  // result establishes rather than singling out any one feature.
   const markerPos = useMemo(() => {
     const p = PEAKS[0];
     return new THREE.Vector3(
       (p.x / 2) * size,
-      heightAt(p.x, p.y) * 3.4 + 0.55,
+      heightAt(p.x, p.y) * 2.2 + 0.5,
       -(p.y / 2) * size
     );
   }, []);

@@ -10,9 +10,18 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
-// TODO: replace with the real domain before launch. OG and Twitter images will
-// not resolve to absolute URLs until this is right.
-const SITE = "https://harshitmodi.dev";
+/**
+ * Site origin, resolved at build time.
+ *
+ * On Vercel this fills itself in from the deployment URL, so the free
+ * *.vercel.app domain works with no edit. Set NEXT_PUBLIC_SITE_URL to override
+ * once a custom domain is attached.
+ */
+const SITE =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "http://localhost:3000");
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),

@@ -2,9 +2,7 @@
  * Single source of truth for all site content.
  *
  * Nothing else in the app hardcodes copy. Sections, metadata, JSON-LD and the
- * case-study pages all read from here, so updating a fact updates it everywhere.
- *
- * Fields marked TODO need real values from Harshit before launch.
+ * case-study pages all read from here.
  */
 
 export type ProjectLink = { label: string; href: string };
@@ -25,65 +23,67 @@ export type Project = {
 
 export type Paper = {
   title: string;
-  venue: string;
   status: string;
   year: string;
   doi?: string;
-  href?: string;
   abstract: string;
 };
+
+/**
+ * The résumé PDF is only linked once the file actually exists at
+ * public/Harshit_Modi_Resume.pdf. Flip this to true after adding it — a live
+ * 404 behind a "Résumé" button is worse than no button.
+ */
+export const RESUME_READY = false;
 
 export const profile = {
   name: "Harshit Modi",
   shortName: "Harshit",
   initials: "HM",
   role: "AI & Data Science Undergraduate",
-  // The one-liner under the name on the landing section.
-  tagline: "I build machine learning systems and write about what they learn.",
+  tagline:
+    "Founding engineer at mello.ai. I build machine learning systems and publish what they actually show.",
   location: "Mumbai, India",
+
   education: {
     institution: "KJ Somaiya College of Engineering",
-    degree: "B.Tech, Artificial Intelligence & Data Science",
+    degree: "B.E, Artificial Intelligence & Data Science",
     location: "Mumbai, India",
     graduation: "May 2027",
-    // Stored with its unit; the label in the UI is just "CGPA".
     cgpa: "8.00 / 10",
   },
 
   about: [
-    "I'm an AI and Data Science undergraduate at KJ Somaiya College of Engineering in Mumbai, graduating in May 2027. My work sits where applied machine learning meets things people actually use — gesture recognition, financial forecasting, retrieval systems.",
-    "Two of my projects became preprints. I care about the part after the model trains: what the features actually say, where the baseline still wins, and whether the thing holds up outside the notebook.",
+    "Third-year B.E. student in AI & Data Science at KJ Somaiya College of Engineering, Mumbai. Founding engineer of mello.ai, a live B2B SaaS voice platform.",
+    "Two first-author research papers, a published data-analytics portfolio, and 2+ years of equity trading experience with working SEBI/RBI knowledge.",
   ],
 
   links: {
-    // TODO: confirm the public email to display.
-    email: "TODO@example.com",
+    email: "connect2harshit123@gmail.com",
     github: "https://github.com/harshit-1243",
-    // TODO: confirm LinkedIn URL.
-    linkedin: "TODO",
-    // TODO: copy the PDF into public/ before this resolves.
+    linkedin: "https://linkedin.com/in/harshit-modi1",
     resume: "/Harshit_Modi_Resume.pdf",
   },
 
   papers: [
     {
-      title: "Real-Time Sign Language Recognition Using MediaPipe Hand Landmarks",
-      venue: "Preprint",
+      title:
+        "Real-Time American Sign Language Recognition with MediaPipe Landmarks and a Compact CNN",
       status: "Preprint",
       year: "2025",
-      // TODO: add DOI once assigned.
-      doi: undefined,
+      doi: "10.5281/zenodo.20526911",
       abstract:
-        "A real-time American Sign Language recognition pipeline built on MediaPipe's 21-point hand topology, trained on a corpus of roughly 87,000 labelled images. Using normalised landmark geometry rather than raw pixels keeps the model small enough to run live in a browser while staying robust to lighting and skin tone.",
+        "A real-time American Sign Language recognition system combining MediaPipe hand-landmark extraction with a compact CNN classifier, achieving 98.2% accuracy at 30 FPS on consumer GPU hardware. Benchmarked against MobileNetV2 and ResNet-50, deployed via a Streamlit interface for accessible, real-world use.",
     },
     {
-      title: "Predicting Quarterly Earnings Surprises on the NSE from Fundamental Ratios",
-      venue: "Preprint",
+      title:
+        "Gradient Boosting for Annual Earnings Direction on NSE Large-Caps: A Documented Null Result",
       status: "Preprint",
       year: "2025",
-      doi: undefined,
+      // NOTE: this DOI has not been independently confirmed to resolve.
+      doi: "10.5281/zenodo.20548574",
       abstract:
-        "A 35-feature model over National Stock Exchange fundamentals, predicting the direction of quarterly earnings surprises. Feature-importance analysis puts cash-flow quality clearly ahead of the margin, leverage, growth and valuation families that dominate conventional screens.",
+        "A systematic gradient-boosting study (XGBoost vs. LightGBM) on earnings prediction for 9 NSE-listed large-cap companies across 5 sectors (FY2017–FY2026), using strict time-ordered cross-validation to eliminate look-ahead bias. Reports a precise, well-documented null result: financial ratios carry limited predictive signal for annual earnings direction in established Indian blue-chip firms.",
     },
   ] satisfies Paper[],
 
@@ -91,86 +91,118 @@ export const profile = {
     {
       slug: "sign-language-detection",
       title: "Real-Time ASL Recognition",
-      tagline: "Live sign language detection from hand landmark geometry",
+      tagline: "98.2% accuracy at 30 FPS from hand-landmark geometry",
       period: "2025",
-      stack: ["Python", "MediaPipe", "TensorFlow", "OpenCV"],
+      stack: ["Python", "MediaPipe", "CNN", "Streamlit", "OpenCV"],
       summary:
-        "Recognises American Sign Language letters in real time from webcam input, using MediaPipe's 21-landmark hand topology instead of raw pixels.",
+        "Recognises American Sign Language in real time by pairing MediaPipe hand-landmark extraction with a compact CNN, benchmarked against MobileNetV2 and ResNet-50.",
       detail: [
-        "MediaPipe gives 21 3D landmarks per hand. Working in that space rather than on pixels means the classifier never has to learn to ignore lighting, background or skin tone — the normalisation does that for free, and the input drops from a full image to 63 floats.",
-        "The training corpus is roughly 87,000 labelled images. Landmarks are normalised against wrist position and hand scale so the same sign at different distances from the camera lands in the same region of feature space.",
-        "The payoff is latency. Because the feature vector is tiny, inference runs comfortably inside a single video frame's budget, which is what makes it usable as an interface rather than a demo.",
+        "MediaPipe gives 21 3D landmarks per hand. Classifying that geometry rather than raw pixels means the model never has to learn to ignore lighting, background or skin tone — the landmark normalisation handles it — and the input collapses from a full image to a small coordinate vector.",
+        "That compactness is what buys the frame rate. The classifier is a small CNN rather than a large backbone, and it holds 98.2% accuracy at 30 FPS on consumer GPU hardware. Benchmarking against MobileNetV2 and ResNet-50 was the point: the compact model is competitive while staying inside a real-time budget those backbones miss.",
+        "It ships behind a Streamlit interface, which matters more than it sounds — a recognition model nobody can run isn't an accessibility tool. The hand in the scene on the home page is the real MediaPipe topology with its actual connection list, cycling through ASL poses.",
       ],
       metrics: [
-        { label: "Training images", value: "87K" },
-        { label: "Hand landmarks", value: "21" },
-        { label: "Feature dimensions", value: "63" },
+        { label: "Accuracy", value: "98.2%" },
+        { label: "Throughput", value: "30 FPS" },
+        { label: "Benchmarked against", value: "MobileNetV2, ResNet-50" },
       ],
-      // TODO: add the public repo link.
+      // TODO: no public repo supplied for this one yet.
       links: [] as ProjectLink[],
     },
     {
       slug: "nse-earnings-prediction",
       title: "NSE Earnings Prediction",
-      tagline: "Which fundamentals actually predict an earnings surprise",
+      tagline: "A documented null result on Indian blue-chip fundamentals",
       period: "2025",
-      stack: ["Python", "scikit-learn", "pandas", "XGBoost"],
+      stack: ["Python", "XGBoost", "LightGBM", "pandas", "scikit-learn"],
       summary:
-        "A 35-feature model over National Stock Exchange fundamentals that predicts the direction of quarterly earnings surprises — and says which ratios carry the signal.",
+        "A systematic XGBoost vs. LightGBM study on annual earnings direction for NSE large-caps, with time-ordered validation — reporting a clean negative finding rather than an inflated one.",
       detail: [
-        "The interesting output here isn't the accuracy number, it's the feature importances. Cash-flow quality dominates, well ahead of the margin, leverage, growth and valuation families that most retail screens are built around.",
-        "That matters because those other families are heavily correlated with each other. Treating them as independent signals — which a naive screen does — double-counts the same underlying story and leaves cash-flow underweighted.",
-        "The 3D landscape on the home page is this result: a 34×34 surface over the feature space, with the tallest peak being cash-flow quality and the secondary ridges the correlated ratio families.",
+        "Nine NSE-listed large-cap companies across five sectors, FY2017 to FY2026, with strict time-ordered cross-validation. The ordering constraint is the whole methodology: shuffled folds leak future information backwards, and a model that has seen the future scores beautifully and predicts nothing.",
+        "The result is negative, and stated precisely: financial ratios carry limited predictive signal for annual earnings direction in established Indian blue-chip firms. Mature large-caps are heavily analysed and heavily smoothed, so the accessible fundamentals are largely priced in by the time they are public.",
+        "Publishing that is deliberate. A null result obtained under honest validation is more useful than a strong number obtained under leakage — it tells you where not to look. The landscape in the 3D scene reflects the finding rather than contradicting it: a noise floor with no dominant peak.",
       ],
       metrics: [
-        { label: "Features", value: "35" },
-        { label: "Dominant signal", value: "Cash-flow quality" },
-        { label: "Market", value: "NSE" },
+        { label: "Companies", value: "9 large-caps" },
+        { label: "Coverage", value: "5 sectors, FY17–FY26" },
+        { label: "Finding", value: "Documented null result" },
       ],
-      links: [] as ProjectLink[],
+      // NOTE: repo is the NSE sector dashboard - related market-data work, not
+      // necessarily the paper's own analysis code.
+      links: [
+        {
+          label: "GitHub — nse-sector-dashboard",
+          href: "https://github.com/harshit-1243/nse-sector-dashboard",
+        },
+      ] as ProjectLink[],
     },
     {
       slug: "fitmentor-ai",
       title: "FitMentor AI",
-      tagline: "Retrieval-augmented fitness guidance that beats a rule-based baseline",
+      tagline: "Retrieval-augmented guidance for training and nutrition",
       period: "2025",
       stack: ["Python", "RAG", "Vector search", "LLM APIs"],
       summary:
-        "A retrieval-augmented assistant for training and nutrition questions, benchmarked against a conventional rule-based recommender.",
+        "A retrieval-augmented assistant for fitness and nutrition questions, grounding answers in a document store rather than improvising them.",
       detail: [
-        "Rule-based fitness advice is fine on the common cases and falls apart on the long tail — the qualified, conditional questions that don't map onto a lookup table. That's exactly where the retrieval pipeline pulled ahead.",
-        "Queries are embedded and matched against a document store, with the retrieved passages grounding the generated answer. The win isn't fluency, it's that the answer stays anchored to a source instead of being improvised.",
-        "The retrieval lattice in the 3D scene is a literal picture of this: a query node at the centre, documents sampled around it, and edges built by actual k-nearest-neighbour search over their positions.",
+        "Queries are embedded and matched against a document store, and the retrieved passages ground the generated answer. The value isn't fluency — it's that a claim about training or nutrition stays anchored to a source instead of being invented, which is exactly where a bare language model is least trustworthy.",
+        "The retrieval lattice in the 3D scene is a literal picture of the structure: a query node pinned at the centre, documents sampled around it, and edges built by real k-nearest-neighbour search over their positions rather than drawn by hand.",
       ],
       metrics: [
+        { label: "Approach", value: "Retrieval-augmented" },
         { label: "Retrieval", value: "kNN over embeddings" },
-        { label: "Baseline", value: "Rule-based" },
-        { label: "Strength", value: "Long-tail queries" },
+        { label: "Domain", value: "Training & nutrition" },
       ],
-      links: [] as ProjectLink[],
+      links: [
+        { label: "GitHub — fitmentor-ai", href: "https://github.com/Electrozap/fitmentor-ai" },
+      ] as ProjectLink[],
     },
   ] satisfies Project[],
 
-  // TODO: confirm real entries. Empty renders an honest placeholder rather than
-  // inventing history.
-  experience: [] as {
-    org: string;
-    role: string;
-    period: string;
-    detail: string;
-  }[],
+  /** Smaller verified builds, listed without a full case study. */
+  otherRepos: [
+    {
+      name: "personal-expense-tracker",
+      href: "https://github.com/harshit-1243/personal-expense-tracker",
+      note: "Personal finance tracking app",
+    },
+  ],
+
+  experience: [
+    {
+      org: "mello.ai",
+      role: "Founding Engineer",
+      period: "May 2026 — Present",
+      detail: "Building a live B2B SaaS voice platform as founding engineer.",
+    },
+    {
+      org: "Marcadona Fashion Media Pvt. Ltd.",
+      role: "Events Intern",
+      period: "Feb — Mar 2026",
+      detail: "Events operations and coordination.",
+    },
+    {
+      org: "SR Counselling",
+      role: "App Development Intern",
+      period: "Jun — Sep 2025",
+      detail: "Application development across the product's client-facing features.",
+    },
+  ],
 
   skills: [
     { group: "Languages", items: ["Python", "TypeScript", "SQL", "C++"] },
     {
       group: "ML & Data",
-      items: ["PyTorch", "TensorFlow", "scikit-learn", "pandas", "NumPy", "OpenCV"],
+      items: ["PyTorch", "TensorFlow", "scikit-learn", "XGBoost", "LightGBM", "pandas", "OpenCV"],
     },
     {
       group: "Systems",
-      items: ["RAG pipelines", "Vector search", "MediaPipe", "Feature engineering"],
+      items: ["RAG pipelines", "Vector search", "MediaPipe", "Voice platforms", "Streamlit"],
     },
-    { group: "Web", items: ["Next.js", "React", "Three.js", "Tailwind"] },
+    {
+      group: "Markets",
+      items: ["Equity trading (2+ yrs)", "SEBI/RBI regulation", "Financial statement analysis"],
+    },
   ],
 } as const;
 

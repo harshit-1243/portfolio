@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { profile } from "@/data/profile";
+import { RESUME_READY, profile } from "@/data/profile";
 import { Panel, Reveal, Section, SectionLabel } from "./Section";
 
 /**
@@ -33,6 +33,15 @@ export function Landing() {
           >
             Get in touch
           </a>
+          {RESUME_READY && (
+            <a
+              href={profile.links.resume}
+              download
+              className="rounded-full border border-[var(--color-line)] px-6 py-3 text-sm font-semibold text-[var(--color-ink)] transition-colors hover:border-[var(--color-primary)]"
+            >
+              Résumé
+            </a>
+          )}
         </div>
       </Reveal>
     </Section>
@@ -145,12 +154,30 @@ export function Projects() {
           </Reveal>
         ))}
       </div>
+
+      {profile.otherRepos.length > 0 && (
+        <Reveal delay={260}>
+          <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--color-muted)]">
+              Also on GitHub
+            </span>
+            {profile.otherRepos.map((repo) => (
+              <a
+                key={repo.href}
+                href={repo.href}
+                className="text-[var(--color-ink)] underline decoration-[var(--color-line)] underline-offset-4 transition-colors hover:decoration-[var(--color-primary)]"
+              >
+                {repo.name}
+              </a>
+            ))}
+          </div>
+        </Reveal>
+      )}
     </Section>
   );
 }
 
 export function Experience() {
-  const { experience } = profile;
   return (
     <Section id="experience">
       <Reveal>
@@ -158,25 +185,21 @@ export function Experience() {
       </Reveal>
       <Reveal delay={80}>
         <Panel className="max-w-3xl">
-          {experience.length === 0 ? (
-            <p className="text-sm leading-relaxed text-[var(--color-muted)]">
-              Currently focused on research and independent projects — see the
-              Research and Projects sections above.
-            </p>
-          ) : (
-            <ul className="space-y-6">
-              {experience.map((item) => (
-                <li key={`${item.org}-${item.period}`} className="border-l-2 border-[var(--color-line)] pl-5">
-                  <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--color-secondary)]">
-                    {item.period}
-                  </div>
-                  <h3 className="mt-1 text-lg font-semibold">{item.role}</h3>
-                  <div className="text-sm text-[var(--color-muted)]">{item.org}</div>
-                  <p className="mt-2 text-sm leading-relaxed">{item.detail}</p>
-                </li>
-              ))}
-            </ul>
-          )}
+          <ul className="space-y-6">
+            {profile.experience.map((item) => (
+              <li
+                key={`${item.org}-${item.period}`}
+                className="border-l-2 border-[var(--color-line)] pl-5"
+              >
+                <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--color-secondary)]">
+                  {item.period}
+                </div>
+                <h3 className="mt-1 text-lg font-semibold">{item.role}</h3>
+                <div className="text-sm text-[var(--color-muted)]">{item.org}</div>
+                <p className="mt-2 text-sm leading-relaxed">{item.detail}</p>
+              </li>
+            ))}
+          </ul>
         </Panel>
       </Reveal>
     </Section>
@@ -216,7 +239,6 @@ export function Skills() {
 
 export function Contact() {
   const { links } = profile;
-  const hasEmail = !links.email.startsWith("TODO");
   return (
     <Section id="contact">
       <Reveal>
@@ -227,20 +249,33 @@ export function Contact() {
           Open to internships and research collaboration.
         </h2>
         <div className="mt-8 flex flex-wrap gap-3">
-          {hasEmail && (
-            <a
-              href={`mailto:${links.email}`}
-              className="rounded-full bg-[var(--color-primary)] px-6 py-3 text-sm font-semibold text-[#05060a]"
-            >
-              {links.email}
-            </a>
-          )}
+          <a
+            href={`mailto:${links.email}`}
+            className="rounded-full bg-[var(--color-primary)] px-6 py-3 text-sm font-semibold text-[#05060a]"
+          >
+            {links.email}
+          </a>
           <a
             href={links.github}
             className="rounded-full border border-[var(--color-line)] px-6 py-3 text-sm font-semibold transition-colors hover:border-[var(--color-primary)]"
           >
             GitHub
           </a>
+          <a
+            href={links.linkedin}
+            className="rounded-full border border-[var(--color-line)] px-6 py-3 text-sm font-semibold transition-colors hover:border-[var(--color-primary)]"
+          >
+            LinkedIn
+          </a>
+          {RESUME_READY && (
+            <a
+              href={links.resume}
+              download
+              className="rounded-full border border-[var(--color-line)] px-6 py-3 text-sm font-semibold transition-colors hover:border-[var(--color-primary)]"
+            >
+              Résumé
+            </a>
+          )}
         </div>
         <p className="mt-16 font-mono text-xs text-[var(--color-muted)]">
           © {new Date().getFullYear()} {profile.name} · {profile.location}
