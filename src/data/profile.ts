@@ -80,7 +80,6 @@ export const profile = {
         "Gradient Boosting for Annual Earnings Direction on NSE Large-Caps: A Documented Null Result",
       status: "Preprint",
       year: "2025",
-      // NOTE: this DOI has not been independently confirmed to resolve.
       doi: "10.5281/zenodo.20548574",
       abstract:
         "A systematic gradient-boosting study (XGBoost vs. LightGBM) on earnings prediction for 9 NSE-listed large-cap companies across 5 sectors (FY2017–FY2026), using strict time-ordered cross-validation to eliminate look-ahead bias. Reports a precise, well-documented null result: financial ratios carry limited predictive signal for annual earnings direction in established Indian blue-chip firms.",
@@ -127,11 +126,11 @@ export const profile = {
         { label: "Coverage", value: "5 sectors, FY17–FY26" },
         { label: "Finding", value: "Documented null result" },
       ],
-      // NOTE: repo is the NSE sector dashboard - related market-data work, not
-      // necessarily the paper's own analysis code.
+      // Labelled "related" deliberately: this is NSE market-data tooling, and
+      // it is not confirmed to hold the paper's own analysis code.
       links: [
         {
-          label: "GitHub — nse-sector-dashboard",
+          label: "Related — NSE sector dashboard",
           href: "https://github.com/harshit-1243/nse-sector-dashboard",
         },
       ] as ProjectLink[],
