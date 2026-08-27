@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { AdaptiveDpr } from "@react-three/drei";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
@@ -18,7 +19,20 @@ export default function Scene() {
 
   // Postprocessing is the first thing to go on a weak device, and it's also
   // motion the reduced-motion setting is asking us not to add.
-  const post = tier === "high" && !reduced;
+  const postAllowed = tier === "high" && !reduced;
+
+  // Even when allowed, the composer mounts late. Compiling bloom's shaders is
+  // one of the largest single blocks of main-thread work on the page, and it
+  // buys nothing during load — the scene is legible without it. Deferring the
+  // mount keeps that cost out of the interaction window.
+  const [postReady, setPostReady] = useState(false);
+  useEffect(() => {
+    if (!postAllowed) return;
+    const timer = window.setTimeout(() => setPostReady(true), 1400);
+    return () => window.clearTimeout(timer);
+  }, [postAllowed]);
+
+  const post = postAllowed && postReady;
 
   return (
     <Canvas
