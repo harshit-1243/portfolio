@@ -31,7 +31,7 @@ export type Paper = {
 
 /**
  * The résumé PDF is only linked once the file actually exists at
- * public/Harshit_Modi_Resume.pdf. Flip this to true after adding it — a live
+ * public/Resume_Harshit_Modi.pdf. Flip this to true after adding it — a live
  * 404 behind a "Résumé" button is worse than no button.
  */
 export const RESUME_READY = false;
@@ -62,7 +62,7 @@ export const profile = {
     email: "connect2harshit123@gmail.com",
     github: "https://github.com/harshit-1243",
     linkedin: "https://linkedin.com/in/harshit-modi1",
-    resume: "/Harshit_Modi_Resume.pdf",
+    resume: "/Resume_Harshit_Modi.pdf",
   },
 
   papers: [

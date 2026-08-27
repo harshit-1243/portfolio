@@ -72,7 +72,7 @@ metadata, JSON-LD and the case-study pages all read from it.
 
 Search that file for `TODO` for the values still needed: public email, LinkedIn
 URL, project repo links, and paper DOIs. `metadataBase` in `src/app/layout.tsx`
-is a placeholder domain, and `public/Harshit_Modi_Resume.pdf` is not yet in the
+is a placeholder domain, and `public/Resume_Harshit_Modi.pdf` is not yet in the
 repo.
 
 ## Avatar
