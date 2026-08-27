@@ -26,6 +26,7 @@
     "@types/node": "^22.0.0",
     "@types/three": "^0.185.0",
     "tailwindcss": "^4.0.0",
-    "@tailwindcss/postcss": "^4.0.0"
+    "@tailwindcss/postcss": "^4.0.0",
+    "lighthouse": "^12.0.0"
   }
 }

@@ -158,8 +158,23 @@ export const profile = {
     },
   ] satisfies Project[],
 
-  /** Smaller verified builds, listed without a full case study. */
+  /** Smaller builds, listed without a full case study. */
   otherRepos: [
+    {
+      name: "mello",
+      href: "https://github.com/harshit-1243/mello",
+      note: "mello.ai — B2B SaaS voice platform",
+    },
+    {
+      name: "mello-ai",
+      href: "https://github.com/harshit-1243/mello-ai",
+      note: "mello.ai",
+    },
+    {
+      name: "mello-outbound",
+      href: "https://github.com/harshit-1243/mello-outbound",
+      note: "AI outbound voice agent (Pipecat/FastAPI)",
+    },
     {
       name: "personal-expense-tracker",
       href: "https://github.com/harshit-1243/personal-expense-tracker",

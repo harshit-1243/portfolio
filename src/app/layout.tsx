@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { profile } from "@/data/profile";
+import { SITE_URL } from "@/lib/site";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const mono = JetBrains_Mono({
@@ -10,21 +11,8 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
-/**
- * Site origin, resolved at build time.
- *
- * On Vercel this fills itself in from the deployment URL, so the free
- * *.vercel.app domain works with no edit. Set NEXT_PUBLIC_SITE_URL to override
- * once a custom domain is attached.
- */
-const SITE =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : "http://localhost:3000");
-
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: `${profile.name} — ${profile.role}`,
     template: `%s — ${profile.name}`,
@@ -32,7 +20,7 @@ export const metadata: Metadata = {
   description: profile.tagline,
   openGraph: {
     type: "website",
-    url: SITE,
+    url: SITE_URL,
     title: `${profile.name} — ${profile.role}`,
     description: profile.tagline,
     siteName: profile.name,

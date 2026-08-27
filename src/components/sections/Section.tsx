@@ -31,20 +31,30 @@ export function Section({
  * IntersectionObserver rather than a scroll handler: it fires off the main
  * thread. It unobserves after the first reveal so scrolling back up doesn't
  * replay the animation, which reads as a glitch rather than an effect.
+ *
+ * `immediate` opts out entirely and renders the content plainly. Use it for
+ * anything above the fold: .reveal starts at opacity 0, and that state is in
+ * the server-rendered HTML, so hidden above-the-fold content is invisible until
+ * JavaScript hydrates and the observer fires. That is not a cosmetic detail -
+ * it delays First Contentful Paint (Lighthouse reported NO_FCP on this page)
+ * and shows a blank screen to anyone on a slow connection.
  */
 export function Reveal({
   children,
   delay = 0,
   className = "",
+  immediate = false,
 }: {
   children: React.ReactNode;
   delay?: number;
   className?: string;
+  immediate?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {
+    if (immediate) return;
     const el = ref.current;
     if (!el) return;
     const io = new IntersectionObserver(
@@ -58,7 +68,11 @@ export function Reveal({
     );
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [immediate]);
+
+  if (immediate) {
+    return <div className={className}>{children}</div>;
+  }
 
   return (
     <div
@@ -72,13 +86,21 @@ export function Reveal({
   );
 }
 
+/**
+ * The section's heading, styled as a small label.
+ *
+ * It is a real <h2>, not a styled div: the page goes <h1> (name) then card
+ * titles at <h3>, and without an <h2> between them the outline skips a level.
+ * Screen-reader users navigate by heading, so a broken outline is a navigation
+ * bug, not a validation nitpick.
+ */
 export function SectionLabel({ index, children }: { index: number; children: React.ReactNode }) {
   return (
-    <div className="mb-5 flex items-center gap-3 font-mono text-xs tracking-[0.2em] text-[var(--color-primary)] uppercase">
+    <h2 className="mb-5 flex items-center gap-3 font-mono text-xs tracking-[0.2em] text-[var(--color-primary)] uppercase">
       <span>{String(index).padStart(2, "0")}</span>
       <span className="h-px w-10 bg-[var(--color-primary)] opacity-50" />
       <span>{children}</span>
-    </div>
+    </h2>
   );
 }
 

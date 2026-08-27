@@ -10,7 +10,7 @@ import { Panel, Reveal, Section, SectionLabel } from "./Section";
 export function Landing() {
   return (
     <Section id="landing">
-      <Reveal>
+      <Reveal immediate>
         <p className="font-mono text-xs uppercase tracking-[0.28em] text-[var(--color-primary)]">
           {profile.role}
         </p>
@@ -245,9 +245,9 @@ export function Contact() {
         <SectionLabel index={6}>Contact</SectionLabel>
       </Reveal>
       <Reveal delay={80}>
-        <h2 className="max-w-2xl text-3xl font-semibold leading-tight md:text-5xl">
+        <p className="max-w-2xl text-3xl font-semibold leading-tight md:text-5xl">
           Open to internships and research collaboration.
-        </h2>
+        </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <a
             href={`mailto:${links.email}`}

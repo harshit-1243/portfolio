@@ -1,6 +1,7 @@
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { SceneMount } from "@/components/scene/SceneMount";
 import { Nav } from "@/components/Nav";
+import { Cursor } from "@/components/Cursor";
 import {
   About,
   Contact,
@@ -45,6 +46,7 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <SceneMount />
+      <Cursor />
       <Nav />
       <SmoothScroll>
         <main id="main" className="content-layer">
